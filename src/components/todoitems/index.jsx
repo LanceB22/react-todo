@@ -1,4 +1,4 @@
-import { TodoItem } from '../TodoItem'
+import { TodoItem } from '../todoitem'
 import './index.css'
 
 export const TodoItems = (props) => {

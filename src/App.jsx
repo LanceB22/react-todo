@@ -1,34 +1,51 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Footer } from './components/footer'
+import { TodoItems } from './Components/TodoItems'
+import { EmptyState } from './Components/EmptyState'
+import { useLocalStorage } from './hooks/useLocalStorage'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+function todoFactory (text) {
+  
+  return {
+    text,
+    done: false,
+    timestamp: new Date().toLocaleString(),
+  }
+}
 
+function App() {
+  const [input, setInput] = useState('')
+  const [todos, setTodos] = useLocalStorage('todos')
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    // const data = new FormData(e.target)
+    setTodos(prev => ([...prev, todoFactory(input)])) // input <> data.get('todo')
+    setInput('')
+  }
+  
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="App">
+      <article className="card" id="container">
+      <h1 id="heading">My React To-do's list</h1>
+      <form className="todo-form" onSubmit={handleSubmit}>
+          <label htmlFor="todo-input">Submit a to-do item:</label>
+          <input
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            name="todo"
+            type="text" 
+            id="todo-input" 
+            placeholder="Enter a to-do item"
+            title="Please fill out this field" 
+            required />
+        </form>
+        <TodoItems todos={todos} setTodos={setTodos} />
+        <EmptyState todos={todos}/>
+        <Footer todos={todos} setTodos={setTodos}/>
+      </article>
+    </div>
   )
 }
 
